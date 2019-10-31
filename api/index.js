@@ -41,32 +41,51 @@ const scrapeData = async () => {
         const date = selector[i].children[0].data
         
         const programSelector = selector[i].next.next
-        try {
-            const program = programSelector.children[0].children[0].data
-        } catch (e) {
-            console.log(date)
-            console.log(programSelector)
-        }
-        
+        let program
+
         // text only
         if(programSelector.children[0].type === "text"){
+            const txt = programSelector.children[0].data
+            program = []
+            if(txt.includes('Federal Skilled Trades Program')){
+                program.push('Federal Skilled Trades Program')
+            }
 
+            if(txt.includes('Federal Skilled Workers Program')){
+                program.push('Federal Skilled Workers Program')
+            }
+
+            if(txt.includes('Canadian Experience Class')){
+                program.push('Canadian Experience Class')
+            }
+
+            if(txt.includes('Provincial Nominee Program')) {
+                program.push('Provincial Nominee Program')
+            }
+        } else {
+            program = programSelector.children[0].children[0].data
         }
         
         const invitationsSelector = programSelector.next.next.next.next
-        try {
-            const invitations = invitationsSelector.children[1].data.trim()
-        } catch (e) {
-            console.log(date)
-            console.log(invitationsSelector)
+        let invitations
+
+        if(invitationsSelector.name === "table") {
+            console.log(invitationsSelector.children[1].children)
+        } else {
+            try {
+                invitations = invitationsSelector.children[1].data.trim()
+            } catch (e) {
+                console.log(date)
+                console.log(invitationsSelector)
+            }
         }
 
         const minRankSelector = invitationsSelector.next.next
         try {
             const minRank = minRankSelector.children[1].data.trim()
         } catch (e) {
-            console.log(date)
-            console.log(minRankSelector)
+            // console.log(date)
+            // console.log(minRankSelector)
         }
 
         const roundTimeSelector = minRankSelector.next.next
