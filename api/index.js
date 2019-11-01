@@ -41,7 +41,7 @@ const scrapeData = async () => {
         const date = selector[i].children[0].data
         
         const programSelector = selector[i].next.next
-        let program
+        let program = null
 
         // text only
         if(programSelector.children[0].type === "text"){
@@ -67,22 +67,31 @@ const scrapeData = async () => {
         }
         
         const invitationsSelector = programSelector.next.next.next.next
-        let invitations
+        let invitations = null
+        let minRank = null
 
-        if(invitationsSelector.name === "table") {
-            console.log(invitationsSelector.children[1].children)
+        if (invitationsSelector.name === "table") {
+            const details = invitationsSelector.children[3].children[1].children
+            invitations = parseInt(details[1].children[0].data)
+            minRank = parseInt(details[3].children[0].data)
+        } else if (invitationsSelector.children[0].name === 'a') {
+            console.log(invitationsSelector.next.next.children[0])
+            const nxtProgram = invitationsSelector.next.next.children[0].data
+            if(nxtProgram.includes('Federal Skilled Trades Program')){
+                program = 'Federal Skilled Trades Program'
+            }
         } else {
             try {
                 invitations = invitationsSelector.children[1].data.trim()
             } catch (e) {
-                console.log(date)
-                console.log(invitationsSelector)
+                // console.log(date)
+                // console.log(invitationsSelector)
             }
         }
 
         const minRankSelector = invitationsSelector.next.next
         try {
-            const minRank = minRankSelector.children[1].data.trim()
+            minRank = minRankSelector.children[1].data.trim()
         } catch (e) {
             // console.log(date)
             // console.log(minRankSelector)
